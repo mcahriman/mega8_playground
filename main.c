@@ -32,7 +32,7 @@ static int uart_putchar(char c, FILE *stream) {
 void init_uart() {
 	UCSRB |= (1 << RXEN) | (1 << TXEN) | _BV(RXCIE); // TX, RX and RX interrupt
 	UCSRC |= (1 << URSEL) | (1 << UCSZ0) | (1 << UCSZ1); //
-	UBRRL = 0x19; //At 16 Mhz 38400 is reasonable bit rate
+	UBRRL = 0x19; //At 16 MHz 38400 is reasonable choice for a bit rate
 }
 
 void init_encoder_input() {
