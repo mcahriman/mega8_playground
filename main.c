@@ -11,6 +11,7 @@
 #include "main.h"
 #include "uart.h"
 #include "encoder.h"
+#include "pwm.h"
 
 
 enum io_state_t {

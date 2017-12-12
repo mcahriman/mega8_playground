@@ -8,6 +8,12 @@
 #ifndef ENCODER_H_
 #define ENCODER_H_
 
+#if defined  (__AVR_ATmega8__)
+#else
+#error("Device not supported, only ATmega8 at the moment")
+#endif
+
+
 void init_encoder_input();
 
 #endif /* ENCODER_H_ */
