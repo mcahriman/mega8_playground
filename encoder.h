@@ -14,6 +14,6 @@
 #endif
 
 
-void init_encoder_input();
+void encoder_init();
 
 #endif /* ENCODER_H_ */

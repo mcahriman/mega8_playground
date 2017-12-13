@@ -1,6 +1,11 @@
 /*
  * main.c
  *
+ *	PWM control routine for TDA5140 BLDC motor
+ *	Target hardware: atmega8
+ *
+ *	License: meh
+ *
  *  Created on: Dec 5, 2017
  *      Author: manfred
  */
@@ -13,6 +18,7 @@
 #include "encoder.h"
 #include "pwm.h"
 
+#define PWM_Period 127
 
 enum io_state_t {
 	IDLE, AWAITING_ANY_RESPONSE, AWAITING_UART_ECHO, ENCODER_UPDATE
@@ -28,13 +34,16 @@ int main() {
 }
 
 void init() {
-	init_uart();
-	init_encoder_input();
+	uart_init();
+	encoder_init();
+	pwm_init();
+	pwm_set_busy_cycle(0);
 	stdout = &uart_stdout;
 }
 
-//TODO: build proper transition map, events, states
+//TODO: design FSMs (tacho data handling)
 void loop() {
+
 	uint16_t loop_counter = 0;
 	uint8_t encoder_value = 0;
 	for (;;) {
@@ -48,7 +57,16 @@ void loop() {
 			io_state = IDLE;
 			break;
 		case ENCODER_UPDATE:
-			encoder_value += bit_is_set(PIND, PIND3) ? 1 : -1;
+			encoder_value += bit_is_set(PIND, PIND3) ? // excuse me
+					((encoder_value <= PWM_Period) ? 1 : 0) : // sorry
+							((encoder_value > 0) ? -1 : 0); // (sorry)
+			// ...
+			encoder_value =
+					encoder_value > PWM_Period ? PWM_Period : encoder_value;
+
+			pwm_set_busy_cycle(encoder_value);
+
+
 			io_state = IDLE;
 			break;
 		case IDLE:
@@ -63,10 +81,13 @@ void loop() {
 }
 
 void display_vals(uint16_t count, uint8_t encoder_value) {
+	//CN: cycle number (bit useless, yup)
+	//EV: encoder value (debug value)
+	//CR: char received
 	printf("CN: %u, EV: %u CR: %c \n", count, encoder_value, cbuf);
 }
 
-//TODO: interrupts handling, factor out encoder reading for large chips
+//TODO: get a clue on better and moar stylish interrupt routines
 
 ISR(USART_RXC_vect) {
 
@@ -84,8 +105,14 @@ ISR(USART_RXC_vect) {
 	sei();
 }
 
+//TODO: meh, I need serve this interrupt inside encoder library,
+//		still in search for elegant approach, as in prev. routine
 ISR(INT0_vect) {
 	cli();
 	io_state = ENCODER_UPDATE;
 	sei();
 }
+
+//TODO: eradicate todos,
+//NOTE: this is still hobby project and I'm wearing protective
+//      googles while using this piece of code. spin safe.

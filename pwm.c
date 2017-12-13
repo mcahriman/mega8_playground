@@ -12,14 +12,13 @@ void pwm_init() {
 	// OC0B Enabled, non inverting. OC0A Disconnected
 	// Selecting fast PWM mode 15
 
-	//TODO: P1: RECHECK REGISTERS
 	TCCR1A = _BV(COM1B1) | _BV(WGM10) | _BV(WGM11);
 	TCCR1B = _BV(WGM12) | _BV(WGM13) | _BV(CS10); // no prescaler
 
 	// Well, Now setting TOP Value (OCR1A)
 	OCR1A = 255; // make TOP bit lower
 	OCR1B = 0;  //
-	DDRB |= _BV(DDB1); //set port as output
+	DDRB |= _BV(DDB2); //set port as output
 }
 
 void pwm_set_period(uint16_t pwm_period) {

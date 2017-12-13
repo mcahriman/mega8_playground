@@ -9,7 +9,7 @@
 #define UART_H_
 
 FILE uart_stdout;
-void init_uart();
+void uart_init();
 int uart_putchar(char c, FILE *stream);
 
 #endif /* UART_H_ */
