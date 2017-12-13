@@ -113,6 +113,21 @@ ISR(INT0_vect) {
 	sei();
 }
 
+//TODO: write small utility for using binary protocol
+
+/**
+ * Final protocol is somewhat like:
+ * 			octet content		description
+ * 			0x00 MAGIC_NUMBER	(TR START INDICATOR)
+ * 			0x01 COMMAND		(0x00 tacho output 0x01 - set RPM)
+ * 			0x02 ARGUMENT		(if COMMAND is 0x01 - RPM)
+ *
+ */
+
+//TODO: calculate RPM somehow (e.g prescaler on 8-bit OCR channel)
+
 //TODO: eradicate todos,
 //NOTE: this is still hobby project and I'm wearing protective
 //      googles while using this piece of code. spin safe.
+
+//TODO: integrate watchdog
