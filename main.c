@@ -16,7 +16,8 @@
 #include "main.h"
 #include "uart.h"
 #include "encoder.h"
-#include "pwm.h"
+#include "timers.h"
+
 
 #define PWM_Period 127
 
@@ -25,6 +26,14 @@ enum io_state_t {
 } io_state;
 
 char cbuf;
+
+struct tda5140_motor_t {
+	uint16_t tacho_count;
+	uint16_t last_tacho_value;
+	enum motor_state_t {
+		SPINNING_UP, STALL, NORMAL_RUNNING, NORMAL_DOWN
+	} motor_state;
+} tda5140_motor;
 
 
 int main() {
@@ -47,6 +56,7 @@ void loop() {
 	uint16_t loop_counter = 0;
 	uint8_t encoder_value = 0;
 	for (;;) {
+
 		switch (io_state) {
 		case AWAITING_ANY_RESPONSE:
 			display_vals(loop_counter, encoder_value);
@@ -108,9 +118,11 @@ ISR(USART_RXC_vect) {
 //TODO: meh, I need serve this interrupt inside encoder library,
 //		still in search for elegant approach, as in prev. routine
 ISR(INT0_vect) {
-	cli();
 	io_state = ENCODER_UPDATE;
-	sei();
+}
+
+ISR(INT1_vect) {
+	tda5140_motor.tacho_count++;
 }
 
 //TODO: write small utility for using binary protocol
@@ -124,8 +136,16 @@ ISR(INT0_vect) {
  *
  */
 
-//TODO: calculate RPM somehow (e.g prescaler on 8-bit OCR channel)
+ISR(TIMER2_OVF_vect) {
+	static uint8_t interrupt_counter = 0;
 
+	if (interrupt_counter > 61) {
+		tda5140_motor.last_tacho_value = tda5140_motor.tacho_count;
+		tda5140_motor.tacho_count = 0;
+	} else {
+		interrupt_counter++;
+	};
+}
 //TODO: eradicate todos,
 //NOTE: this is still hobby project and I'm wearing protective
 //      googles while using this piece of code. spin safe.
