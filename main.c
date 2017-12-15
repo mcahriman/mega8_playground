@@ -91,10 +91,12 @@ void loop() {
 }
 
 void display_vals(uint16_t count, uint8_t encoder_value) {
-	//CN: cycle number (bit useless, yup)
+	//RPM: 60 * (tacho value / coils)
 	//EV: encoder value (debug value)
 	//CR: char received
-	printf("CN: %u, EV: %u CR: %c \n", count, encoder_value, cbuf);
+	printf("RPM: %u, EV: %u CR: %c \n",
+			tda5140_motor.last_tacho_value / 12 * 60,
+			encoder_value, cbuf);
 }
 
 //TODO: get a clue on better and moar stylish interrupt routines
@@ -133,6 +135,11 @@ ISR(INT1_vect) {
  * 			0x00 MAGIC_NUMBER	(TR START INDICATOR)
  * 			0x01 COMMAND		(0x00 tacho output 0x01 - set RPM)
  * 			0x02 ARGUMENT		(if COMMAND is 0x01 - RPM)
+ *
+ * Responce:
+ * 			0x00 MAGIC_NUMBER
+ * 			0x01 RESPONSE Low Octet
+ * 			0x02 RESPONSE High Octet
  *
  */
 
