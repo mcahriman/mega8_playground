@@ -146,9 +146,10 @@ ISR(INT1_vect) {
 ISR(TIMER2_OVF_vect) {
 	static uint8_t interrupt_counter = 0;
 
-	if (interrupt_counter > 61) {
+	if (interrupt_counter > SECOND_OVF_INTERRUPT_COUNT) {
 		tda5140_motor.last_tacho_value = tda5140_motor.tacho_count;
 		tda5140_motor.tacho_count = 0;
+		interrupt_counter = 1;
 	} else {
 		interrupt_counter++;
 	};

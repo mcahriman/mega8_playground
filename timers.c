@@ -41,6 +41,7 @@ void pwm_set_busy_cycle(uint16_t busy_cycle) {
  * each 61 interrupt cycle we would probably like to
  */
 void timer2_init() {
-	TCCR2 |= TIMER_2_PRESCALER_1024; // clkio/1024, (1/61 sec rougly for full cycle)
+	TCCR2 |= TIMER_2_PRESCALER_1024; // clkio/1024,
+	// (1/60 sec rougly for full cycle on 16 MHZ and 1/30 sec for 8)
 	TIMSK |= TOIE2; //enable interrupt
 }

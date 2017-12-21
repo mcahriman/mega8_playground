@@ -10,6 +10,14 @@
 
 #define TIMER_2_PRESCALER_1024 (_BV(CS22) | _BV(CS21) | _BV(CS20))
 
+#if F_CPU==16000000
+#define SECOND_OVF_INTERRUPT_COUNT 61
+#elif F_CPU==8000000
+#define SECOND_OVF_INTERRUPT_COUNT 30
+#else
+#error "Current F_CPU is not supported. Add your values please"
+#endif
+
 // TODO: think about consistent API (if feasible and makes sense)
 
 // 16 bit timer/Counter 1 fast pwm
