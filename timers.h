@@ -8,7 +8,12 @@
 #ifndef TIMERS_H_
 #define TIMERS_H_
 
+// clkio/1024
 #define TIMER_2_PRESCALER_1024 (_BV(CS22) | _BV(CS21) | _BV(CS20))
+
+// here we define, how much overflows we will get
+// using 1024 times prescaled timer during one second
+// to avoid computations
 
 #if F_CPU==16000000
 #define SECOND_OVF_INTERRUPT_COUNT 61

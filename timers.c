@@ -12,7 +12,7 @@
  *
  */
 
-void pwm_init() {
+inline void pwm_init() {
 	//PRR.PRTIM0 should be zero, nobody needs PRADC so turning it on
 	//Select mode:
 	// OC0B Enabled, non inverting. OC0A Disconnected
@@ -27,11 +27,11 @@ void pwm_init() {
 	DDRB |= _BV(DDB2); //set port as output
 }
 
-void pwm_set_period(uint16_t pwm_period) {
+inline void pwm_set_period(uint16_t pwm_period) {
 	OCR1A = pwm_period;
 }
 
-void pwm_set_busy_cycle(uint16_t busy_cycle) {
+inline void pwm_set_busy_cycle(uint16_t busy_cycle) {
 	OCR1B = busy_cycle;
 }
 
@@ -41,7 +41,6 @@ void pwm_set_busy_cycle(uint16_t busy_cycle) {
  * each 61 interrupt cycle we would probably like to
  */
 void timer2_init() {
-	TCCR2 |= TIMER_2_PRESCALER_1024; // clkio/1024,
-	// (1/60 sec rougly for full cycle on 16 MHZ and 1/30 sec for 8)
+	TCCR2 |= TIMER_2_PRESCALER_1024;
 	TIMSK |= TOIE2; //enable interrupt
 }

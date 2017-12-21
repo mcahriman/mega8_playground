@@ -55,6 +55,7 @@ void loop() {
 
 	uint16_t loop_counter = 0;
 	uint8_t encoder_value = 0;
+	static int encoder_update_count = 0;
 	for (;;) {
 
 		switch (io_state) {
@@ -67,9 +68,18 @@ void loop() {
 			io_state = IDLE;
 			break;
 		case ENCODER_UPDATE:
-			encoder_value += bit_is_set(PIND, PIND3) ? // excuse me
-					((encoder_value <= PWM_Period) ? 1 : 0) : // sorry
-							((encoder_value > 0) ? -1 : 0); // (sorry)
+
+			printf("encoder_update # %d, %d\n",
+					encoder_update_count++,
+					(bit_is_set(ENCODER_DATA_PINS, ENCODER_DATA_PIN) ? 1 : 0)
+							+ (bit_is_set(PIND, ENCODER_INT_PIN) ? 2 : 0));
+
+
+			//TODO:
+			encoder_value +=
+			bit_is_set(ENCODER_DATA_PINS, ENCODER_DATA_PIN) ?
+					((encoder_value <= PWM_Period) ? 1 : 0) :
+					((encoder_value > 0) ? -1 : 0);
 			// ...
 			encoder_value =
 					encoder_value > PWM_Period ? PWM_Period : encoder_value;
@@ -119,7 +129,7 @@ ISR(USART_RXC_vect) {
 
 //TODO: meh, I need serve this interrupt inside encoder library,
 //		still in search for elegant approach, as in prev. routine
-ISR(INT0_vect) {
+ISR(ENCODER_INTERRUPT_VECT) {
 	io_state = ENCODER_UPDATE;
 }
 
