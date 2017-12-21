@@ -55,6 +55,7 @@ void loop() {
 
 	uint16_t loop_counter = 0;
 	uint8_t encoder_value = 0;
+	uint8_t direction = 0;
 	static int encoder_update_count = 0;
 	for (;;) {
 
@@ -69,22 +70,25 @@ void loop() {
 			break;
 		case ENCODER_UPDATE:
 
-			printf("encoder_update # %d, %d\n",
-					encoder_update_count++,
-					(bit_is_set(ENCODER_DATA_PINS, ENCODER_DATA_PIN) ? 1 : 0)
-							+ (bit_is_set(PIND, ENCODER_INT_PIN) ? 2 : 0));
-
-
 			//TODO:
-			encoder_value +=
-			bit_is_set(ENCODER_DATA_PINS, ENCODER_DATA_PIN) ?
-					((encoder_value <= PWM_Period) ? 1 : 0) :
-					((encoder_value > 0) ? -1 : 0);
-			// ...
-			encoder_value =
-					encoder_value > PWM_Period ? PWM_Period : encoder_value;
+			direction = bit_is_set(ENCODER_DATA_PINS, ENCODER_DATA_PIN);
+			if (direction) {
+				encoder_value++;
+			} else {
+				encoder_value--;
+			}
+
+			if (encoder_value == 0xFF) { //overflow
+				encoder_value = 0;
+			} else if (encoder_value > PWM_Period) {
+				encoder_value = PWM_Period;
+			}
 
 			pwm_set_busy_cycle(encoder_value);
+
+
+			printf("encoder_update # %d, %d\n", encoder_update_count++,
+					direction);
 
 
 			io_state = IDLE;
