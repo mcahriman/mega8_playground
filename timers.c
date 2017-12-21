@@ -1,8 +1,10 @@
+#include <avr/io.h>
+#include <inttypes.h>
+
 #include "timers.h"
 
-#include <avr/io.h>
-
 /**
+
  *  this setup assumes you need only one pwm channel and
  *  variable PWM period really matters.
  *  if you need second 16 bit PWM channel, you'd

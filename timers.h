@@ -14,8 +14,8 @@
 
 // 16 bit timer/Counter 1 fast pwm
 void pwm_init();
-void pwm_set_period(uint16_t);
-void pwm_set_busy_cycle(uint16_t);
+void pwm_set_period(uint16_t period);
+void pwm_set_busy_cycle(uint16_t busy_cycle);
 void timer2_init();
 
 #endif /* TIMERS_H_ */
