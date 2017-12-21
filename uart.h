@@ -12,6 +12,9 @@ FILE uart_stdout;
 void uart_init();
 int uart_putchar(char c, FILE *stream);
 
+//this is somewhat strange attempt to get consistant stuff at list
+//somewhere, but now uart in this project is compatible both for 16MHz and 8
+
 #if F_CPU==16000000
 #define UBRRL_38400_VAL 0x19
 #elif F_CPU==8000000
